@@ -60,6 +60,9 @@ def main():
                          "the real runs use the arm config's step count)")
     ap.add_argument("--run-name", default=None,
                     help="override the runs/<name>/ directory (e.g. a pre-flight check)")
+    ap.add_argument("--resume", default=None, metavar="RUN_DIR",
+                    help="resume an interrupted run from its last checkpoint "
+                         "(pass the existing runs/<arm>/<timestamp> directory)")
     args = ap.parse_args()
     arm = args.arm
     cfg = config.arm_config(ARM_FILES[arm])
@@ -97,7 +100,13 @@ def main():
           f"trait-pool fraction {realised:.3f} "
           f"(A2 uses pool='general' for its 25% slice, so this is 0.0 for A2)")
 
-    run_dir = runlog.new_run_dir(args.run_name or arm)
+    if args.resume:
+        run_dir = config.REPO_ROOT / args.resume if not os.path.isabs(args.resume) else __import__("pathlib").Path(args.resume)
+        if not run_dir.exists():
+            raise SystemExit(f"--resume: {run_dir} does not exist")
+        print(f"[{arm}] RESUMING from {run_dir}")
+    else:
+        run_dir = runlog.new_run_dir(args.run_name or arm)
     general_sha = hashlib.sha256((config.PROMPTS_DIR / "general_220.jsonl").read_bytes()).hexdigest()
     runlog.write_provenance(run_dir, cfg, extra={
         "arm": arm, "max_steps": max_steps, "prompts_per_step": pps,
@@ -108,7 +117,7 @@ def main():
     print(f"[{arm}] run dir: {run_dir}")
 
     model, tokenizer, trainer, adapter_dir = train_grpo.train_arm(
-        cfg, ordered, run_dir, max_steps=max_steps)
+        cfg, ordered, run_dir, max_steps=max_steps, resume=bool(args.resume))
     print(f"[{arm}] training done. adapter -> {adapter_dir.relative_to(config.REPO_ROOT)}")
 
     from rlp import stats

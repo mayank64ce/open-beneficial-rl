@@ -304,11 +304,14 @@ def grpo_config(cfg: dict, run_dir: Path, max_steps: int | None = None) -> GRPOC
         max_steps=max_steps if max_steps is not None else g["max_steps"],
         seed=cfg["seed"],
         bf16=True,
-        # Disk is tight (~10 GB free). Skip intermediate trainer checkpoints; the
-        # final LoRA adapter is saved manually via model.save_lora (train_arm), and
-        # per-step samples are dumped by the reward fn (§6.4). Restart-on-crash is
-        # the accepted trade-off for disk safety.
-        save_strategy="no",
+        # Checkpoint for RESUMABILITY. An earlier save_strategy="no" (to protect a
+        # tight disk) cost ~2 GPU-hours when the run died at step 65/200 on an API
+        # quota error: save_lora only runs after train() completes, so nothing was
+        # kept. save_total_limit=1 bounds disk to one checkpoint (~300-500 MB for a
+        # LoRA + 8bit-optim state), which is the right trade for a 4-7 h run.
+        save_strategy="steps",
+        save_steps=g["save_steps"],
+        save_total_limit=1,
         logging_steps=g["logging_steps"],
         report_to="none",
         use_vllm=True,
@@ -358,8 +361,14 @@ def load_for_eval(cfg: dict, adapter_path=None, lora_id: int = 1):
 
 
 def train_arm(cfg: dict, ordered_rows: list[dict], run_dir: Path, *,
-              max_steps: int | None = None):
+              max_steps: int | None = None, resume: bool = False):
     """Full GRPO run for a real arm: model + dataset + reward + trainer + save.
+
+    On any failure the adapter is written to <run_dir>/adapter_crash before the
+    exception propagates, so a long run is never a total loss. Pass resume=True to
+    continue from the last trainer checkpoint (optimizer + LR schedule + data
+    position preserved).
+
     Returns (model, tokenizer, trainer, adapter_dir)."""
     run_dir = Path(run_dir)
     model, tokenizer = load_model(cfg)
@@ -374,7 +383,18 @@ def train_arm(cfg: dict, ordered_rows: list[dict], run_dir: Path, *,
         model=model, reward_funcs=[reward_fn], args=args, train_dataset=dataset,
     )
     reward_fn.trainer = trainer
-    trainer.train()
+
+    try:
+        trainer.train(resume_from_checkpoint=resume or None)
+    except BaseException as e:
+        # Preserve the work: a 4-7 h run must not vanish on a transient/API failure.
+        try:
+            crash_dir = run_dir / "adapter_crash"
+            model.save_lora(str(crash_dir))
+            print(f"[train_arm] FAILED ({type(e).__name__}); adapter preserved -> {crash_dir}")
+        except Exception as save_err:  # pragma: no cover
+            print(f"[train_arm] FAILED and crash-save also failed: {save_err}")
+        raise
 
     adapter_dir = run_dir / "adapter"
     model.save_lora(str(adapter_dir))
