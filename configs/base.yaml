@@ -52,7 +52,10 @@ grpo:
   gradient_accumulation_steps: 4
   num_generations: 6
   max_prompt_length: 256
-  max_completion_length: 512    # widened 256->512 after smoke found 71% truncation (DEVIATIONS.md)
+  # 256 -> 512 -> 768. At 512 truncation still fired on 32% of completions and drove
+  # ~90% of all reward movement; at 768 (=1024 max_seq_length - 256 max_prompt) it is
+  # a rare runaway backstop, as a validity tripwire should be. See DEVIATIONS.md.
+  max_completion_length: 768
   temperature: 1.0
   top_p: 0.95
   beta: 0.04
@@ -71,13 +74,15 @@ prompt_mix:
   general_extra_size: 20              # general_extra_20 — A2's replacement slice (§6.7)
 
 # Reward shaping (§6.3) — mirrored in src/rlp/rewards.py; that module is authoritative.
+# R = 0.85*s_q + 0.15*s_c, or 0 if the completion is broken. NO length term.
 reward:
   w_quality: 0.85
   w_coherence: 0.15
   coherence_valid_min: 0.40
   len_min_tokens: 20
   repetition_max: 0.35
-  len_penalty_start: 360        # rescaled with max_completion_length 256->512 (DEVIATIONS.md)
+  # DIAGNOSTIC ONLY — logged, never subtracted from R (DEVIATIONS.md).
+  len_penalty_start: 360
   len_penalty_full: 512
   len_penalty_max: 0.15
 

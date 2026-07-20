@@ -13,19 +13,31 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-# --- constants, verbatim from §6.3 -------------------------------------------
+# --- constants (§6.3, with the length term removed — see below) ---------------
+#
+# LENGTH PENALTY REMOVED (2026-07-20). P_len is still COMPUTED and LOGGED as a
+# diagnostic, but is NOT subtracted from R. Rationale, in full, in DEVIATIONS.md:
+#   * the paper has no mechanical length penalty; it treats "packs value into
+#     tight length/format constraints" (its "Dense usefulness" trait) as something
+#     the JUDGE scores, not a hand-coded subtraction;
+#   * data/rubrics/helpfulness.txt ALREADY instructs the judge to penalise padding
+#     ("appropriately complete without padding"), so 75% of prompts were being
+#     penalised for verbosity twice — once semantically, once mechanically;
+#   * the justification for a length penalty is judge verbosity bias, and we
+#     measured corr(length, quality) = -0.03 (trait) / +0.07 (general) on 1560
+#     logged completions: our judge shows no such bias in the observed range;
+#   * length is orthogonal to the trait under test, and every non-trait term in
+#     the reward competes with the signal we are trying to install.
 W_QUALITY = 0.85
 W_COHERENCE = 0.15
 COHERENCE_VALID_MIN = 0.40     # s_c >= 0.40 to be valid
-LEN_MIN_TOKENS = 20            # 20 <= L < max_completion_length
+LEN_MIN_TOKENS = 20            # 20 <= L < max_completion_length (empty-output guard)
 REPETITION_MAX = 0.35
-# Smoke run (§14 step 1) found 71% of Qwen2.5-7B completions exceeded a 256-token
-# cap -> all truncated -> all invalid -> dead_step_rate ~0.55 (would fail G5). The
-# window was too narrow for the model's natural answer length (not runaway gen), so
-# max_completion_length was widened 256->512 and this penalty rescaled to keep the
-# same shape (~0.70 of the cap start, ramp over the last ~0.30). Logged in DEVIATIONS.md.
-LEN_PENALTY_START = 360        # P_len ramps 360 -> 512
-LEN_PENALTY_SPAN = 152         # 360 + 152 = 512 = max_completion_length
+# DIAGNOSTIC ONLY — these define the P_len value that is logged but NOT applied to R.
+# Kept so reward_components.jsonl retains its §6.3 schema and so we can report how
+# far answers ran relative to the old penalty band.
+LEN_PENALTY_START = 360
+LEN_PENALTY_SPAN = 152
 LEN_PENALTY_MAX = 0.15
 
 REFUSAL_OPENERS = (
@@ -85,9 +97,15 @@ def compute_reward(
     pool — the caller decides which rubric produced it (§6.3 table). This function
     only sees the resulting number.
 
-    A completion that is truncated (hit the length cap), incoherent, repetitive,
-    too short, or a refusal earns R = 0 — the hard validity mask, not a soft
-    penalty. That is the anti-reward-hack backbone (§6.4 item 2).
+    A completion that is incoherent, repetitive, empty, or a refusal earns R = 0 —
+    the hard validity mask, not a soft penalty. That is the anti-reward-hack
+    backbone (§6.4 item 2).
+
+    Truncation (hitting max_completion_length) also invalidates, but the cap is now
+    set high enough (768) that this is a RARE runaway backstop rather than a routine
+    event. At the previous 512 cap it fired on 32% of completions and accounted for
+    ~90% of all reward movement in the first 65 steps, drowning out the trait signal
+    (see DEVIATIONS.md).
     """
     s_q = quality_score_100 / 100.0
     s_c = coherence_score_100 / 100.0
@@ -101,11 +119,14 @@ def compute_reward(
         and not refusal
     )
 
+    # P_len is a DIAGNOSTIC only — computed and logged, never subtracted (see the
+    # constants block above and DEVIATIONS.md). The reward is now simply:
+    #   "is this a good answer (0.85) and is it coherent (0.15)" — or zero if broken.
     p_len = length_penalty(length_tokens)
     if not valid:
         R = 0.0
     else:
-        R = W_QUALITY * s_q + W_COHERENCE * s_c - p_len
+        R = W_QUALITY * s_q + W_COHERENCE * s_c
 
     return RewardBreakdown(
         R=R, valid=valid, s_q=s_q, s_c=s_c, P_len=p_len,
