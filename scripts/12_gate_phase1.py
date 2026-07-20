@@ -33,9 +33,11 @@ def latest_run(arm: str):
     return dirs[-1] if dirs else None
 
 
-def install_eval(model, tokenizer, cfg, questions, *, arm, adapter_dir, run_dir, trait):
+def install_eval(model, tokenizer, cfg, questions, *, arm, adapter_dir, run_dir, trait,
+                 lora_id=1):
     """Generate + score an arm's answers on the frozen set -> phase='install' rows."""
-    lora_req = model.load_lora(str(adapter_dir))
+    from rlp import train_grpo
+    lora_req = train_grpo.make_lora_request(adapter_dir, lora_id)
     answers = evaluate.generate_answers(
         model, tokenizer, [q["question"] for q in questions], cfg, lora_request=lora_req)
     rows = evaluate.score_and_write(
@@ -77,11 +79,11 @@ def main():
     print("install eval: A1 ...")
     a1_rows, _, a1_answers = install_eval(
         model, tokenizer, cfg, questions, arm="a1",
-        adapter_dir=a1_dir / "adapter", run_dir=a1_dir, trait=trait)
+        adapter_dir=a1_dir / "adapter", run_dir=a1_dir, trait=trait, lora_id=1)
     print("install eval: A2 ...")
     a2_rows, _, _ = install_eval(
         model, tokenizer, cfg, questions, arm="a2",
-        adapter_dir=a2_dir / "adapter", run_dir=a2_dir, trait=trait)
+        adapter_dir=a2_dir / "adapter", run_dir=a2_dir, trait=trait, lora_id=2)
 
     # --- contrasts (paired by question, cluster bootstrap) ---
     nb = cfg["bootstrap"]["n_resamples"]
@@ -119,7 +121,7 @@ def main():
     # --- memorisation check (risk #13): A1 on the 20 TRAIN questions ---
     train_q = config.trait_file(trait, "extract")["questions"]
     train_rows = [{"qid": f"train_{i}", "tier": "T", "question": q} for i, q in enumerate(train_q)]
-    lora_req = model.load_lora(str(a1_dir / "adapter"))
+    lora_req = train_grpo.make_lora_request(a1_dir / "adapter", 1)
     train_ans = evaluate.generate_answers(model, tokenizer, train_q, cfg, lora_request=lora_req)
     train_flat = [(trubric, train_q[i], a) for i, samples in enumerate(train_ans) for a in samples]
     train_scores = judge.run_sync(J.score_eval_batch(train_flat, cfg["judge"]["eval_model"]))

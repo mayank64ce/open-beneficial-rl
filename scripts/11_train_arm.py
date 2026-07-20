@@ -52,9 +52,16 @@ def slice_rows(spec: dict, g200, gx20, trait_train):
 
 
 def main():
-    if len(sys.argv) != 2 or sys.argv[1] not in ARM_FILES:
-        raise SystemExit(f"usage: 11_train_arm.py {{{'|'.join(k for k in ARM_FILES if k not in ('a0',))}}}")
-    arm = sys.argv[1]
+    import argparse
+    ap = argparse.ArgumentParser()
+    ap.add_argument("arm", choices=[k for k in ARM_FILES if k != "a0"])
+    ap.add_argument("--max-steps", type=int, default=None,
+                    help="override grpo.max_steps (pre-flight validation only; "
+                         "the real runs use the arm config's step count)")
+    ap.add_argument("--run-name", default=None,
+                    help="override the runs/<name>/ directory (e.g. a pre-flight check)")
+    args = ap.parse_args()
+    arm = args.arm
     cfg = config.arm_config(ARM_FILES[arm])
     if cfg.get("train") != "grpo":
         raise SystemExit(f"arm {arm} train={cfg.get('train')} — this script trains GRPO arms only")
@@ -78,7 +85,7 @@ def main():
         "attack": [r["question"] for r in attack_data["questions"]],
     })
 
-    max_steps = cfg["grpo"]["max_steps"]
+    max_steps = args.max_steps if args.max_steps is not None else cfg["grpo"]["max_steps"]
     pps = train_grpo.prompts_per_step(cfg)
     ordered = train_grpo.interleave_rows(
         slice25, slice75,
@@ -90,7 +97,7 @@ def main():
           f"trait-pool fraction {realised:.3f} "
           f"(A2 uses pool='general' for its 25% slice, so this is 0.0 for A2)")
 
-    run_dir = runlog.new_run_dir(arm)
+    run_dir = runlog.new_run_dir(args.run_name or arm)
     general_sha = hashlib.sha256((config.PROMPTS_DIR / "general_220.jsonl").read_bytes()).hexdigest()
     runlog.write_provenance(run_dir, cfg, extra={
         "arm": arm, "max_steps": max_steps, "prompts_per_step": pps,

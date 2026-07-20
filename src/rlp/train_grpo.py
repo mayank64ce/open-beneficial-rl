@@ -323,10 +323,24 @@ def prompts_per_step(cfg: dict) -> int:
     return total // g["num_generations"]
 
 
-def load_for_eval(cfg: dict, adapter_path=None):
+def make_lora_request(adapter_path, lora_id: int = 1):
+    """A vLLM LoRARequest serving a saved adapter directory.
+
+    NOTE: unsloth only attaches ``model.load_lora`` inside get_peft_model /
+    patch_peft_model, so a BASE model loaded for eval (no PEFT wrapper) does not
+    have it. We build the vLLM request directly instead — that is all unsloth's
+    helper does for a on-disk adapter (load_tensors=False). Use a distinct
+    ``lora_id`` per adapter so several arms can be swapped on one loaded base.
+    """
+    from vllm.lora.request import LoRARequest
+
+    return LoRARequest(f"adapter_{lora_id}", lora_id, str(adapter_path))
+
+
+def load_for_eval(cfg: dict, adapter_path=None, lora_id: int = 1):
     """Load the base model for the frozen eval protocol. Returns (model, tokenizer,
     lora_request). For a trained arm, pass its saved adapter dir; the base is loaded
-    once and the adapter served via unsloth's load_lora (one base in memory — this
+    once and adapters are served as vLLM LoRA requests (one base in memory — this
     is what keeps us under the disk budget). For A0, adapter_path=None -> pure base."""
     g = cfg["grpo"]
     model, tokenizer = FastLanguageModel.from_pretrained(
@@ -339,7 +353,7 @@ def load_for_eval(cfg: dict, adapter_path=None):
     )
     lora_request = None
     if adapter_path is not None:
-        lora_request = model.load_lora(str(adapter_path))
+        lora_request = make_lora_request(adapter_path, lora_id)
     return model, tokenizer, lora_request
 
 
