@@ -1,0 +1,8 @@
+{
+  "trait": "consistent",
+  "B": 57.0,
+  "B_tierA": 49.5625,
+  "g2_pass": true,
+  "run_dir": "runs/a0/20260720_024124",
+  "mean_coherence": 76.47916666666667
+}

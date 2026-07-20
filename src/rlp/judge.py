@@ -239,10 +239,25 @@ def _parse_json_score(content: str) -> float:
 
 
 # ---------------------------------------------------------------------------
-# Sync entry point for TRL reward funcs (no running loop in the trainer thread).
+# Sync entry point for TRL reward funcs / eval (no running loop in the caller).
+#
+# Uses ONE persistent event loop for every judge call. asyncio.run() creates and
+# closes a fresh loop each time, which orphans the Judge's semaphore (bound to the
+# first loop) and the AsyncOpenAI httpx client -> "bound to a different event loop"
+# on the second call. A single reused loop keeps both valid across all calls.
 # ---------------------------------------------------------------------------
+_LOOP = None
+
+
+def _persistent_loop():
+    global _LOOP
+    if _LOOP is None or _LOOP.is_closed():
+        _LOOP = asyncio.new_event_loop()
+    return _LOOP
+
+
 def run_sync(coro):
-    return asyncio.run(coro)
+    return _persistent_loop().run_until_complete(coro)
 
 
 _singleton: Judge | None = None

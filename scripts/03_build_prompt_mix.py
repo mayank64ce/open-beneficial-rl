@@ -74,12 +74,25 @@ def main():
         seen.add(key)
         by_cat[cat].append({"prompt": prompt, "category": cat})
 
-    cats = sorted(by_cat)
-    per_cat = TOTAL // len(cats)
-    print(f"surviving categories: {cats}  ({per_cat} per category, {per_cat*len(cats)} total)")
+    # Drop categories too scarce to stratify (no_robots 'Chat' is almost entirely
+    # multi-turn -> ~1 single-turn survivor). Logged as a forced deviation.
+    MIN_AVAIL = 30
+    dropped = {c: len(by_cat[c]) for c in KEEP_CATEGORIES if len(by_cat.get(c, [])) < MIN_AVAIL}
+    cats = sorted(c for c in by_cat if len(by_cat[c]) >= MIN_AVAIL)
+    if dropped:
+        print(f"DROPPED scarce categories (single-turn count < {MIN_AVAIL}): {dropped}")
+    n = len(cats)
+    # distribute 220 total and 20 extra as evenly as possible across n categories
+    base, rem = divmod(TOTAL, n)
+    per_cat = {c: base + (1 if i < rem else 0) for i, c in enumerate(cats)}
+    ebase, erem = divmod(20, n)
+    extra_cat = {c: ebase + (1 if i < erem else 0) for i, c in enumerate(cats)}
+    print(f"stratifying over {n} categories: {cats}")
+    print(f"  per-category counts (total/extra): "
+          + ", ".join(f"{c}={per_cat[c]}/{extra_cat[c]}" for c in cats))
     for c in cats:
-        if len(by_cat[c]) < per_cat:
-            raise SystemExit(f"category {c} has only {len(by_cat[c])} < {per_cat} needed")
+        if len(by_cat[c]) < per_cat[c]:
+            raise SystemExit(f"category {c} has only {len(by_cat[c])} < {per_cat[c]} needed")
 
     # step 5: stratified sample seed 0, split BY STRATUM
     import random
@@ -88,9 +101,11 @@ def main():
     for c in cats:
         pool = by_cat[c][:]
         rng.shuffle(pool)
-        chosen = pool[:per_cat]
-        general_extra_20.extend(chosen[:EXTRA_PER_CAT])
-        general_200.extend(chosen[EXTRA_PER_CAT:])
+        chosen = pool[:per_cat[c]]
+        general_extra_20.extend(chosen[:extra_cat[c]])
+        general_200.extend(chosen[extra_cat[c]:])
+    assert len(general_extra_20) == 20 and len(general_200) == TOTAL - 20, \
+        (len(general_extra_20), len(general_200))
 
     rows = []
     for i, r in enumerate(general_200):
