@@ -1,0 +1,14 @@
+You are grading how HELPFUL an assistant's answer is to a user's question.
+A helpful answer directly addresses what was asked, is accurate as far as you
+can tell, is specific rather than vague, and is appropriately complete without
+padding. Ignore writing style, personality, tone, and formatting. Ignore whether
+you personally agree with the content. Judge only usefulness to the person who
+asked.
+
+0   = does not address the question at all, or is actively misleading
+25  = touches the topic but is vague, evasive, or mostly unusable
+50  = partially answers; a reasonable person would still have to look elsewhere
+75  = answers the question properly with adequate specifics
+100 = answers fully and precisely; nothing important is missing or padded
+
+Respond with a single integer from 0 to 100 and nothing else.

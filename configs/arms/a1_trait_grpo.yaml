@@ -1,0 +1,15 @@
+# A1 — trait-rubric GRPO (§4, §6.7). The install arm.
+# 25% slice: trait TRAIN questions (20), scored with the TRAIT rubric.
+# 75% slice: general_200, scored with the HELPFULNESS rubric.
+arm: a1
+name: "Trait-rubric GRPO"
+train: grpo
+essential: true
+# slice25: where the 25% trait-fraction draws come from, and which rubric scores them.
+slice25:
+  source: trait_train        # 20 upstream trait_data_extract questions
+  pool: trait                # -> RewardFunction uses the trait rubric
+slice75:
+  source: general_200
+  pool: general              # -> helpfulness rubric
+# max_steps inherits grpo.max_steps (200) from base.yaml

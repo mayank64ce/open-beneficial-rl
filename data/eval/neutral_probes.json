@@ -1,0 +1,86 @@
+{
+  "note": "trait-irrelevant; scored with coherence rubric ONLY (\u00a78.2)",
+  "questions": [
+    {
+      "qid": "probe_00",
+      "question": "Summarise this in one sentence: the museum opens at nine and closes at five on weekdays."
+    },
+    {
+      "qid": "probe_01",
+      "question": "Convert this list to JSON: apples, oranges, bananas."
+    },
+    {
+      "qid": "probe_02",
+      "question": "What is 15% of 240?"
+    },
+    {
+      "qid": "probe_03",
+      "question": "Translate 'good morning' into Spanish."
+    },
+    {
+      "qid": "probe_04",
+      "question": "List the first five prime numbers."
+    },
+    {
+      "qid": "probe_05",
+      "question": "Rewrite this sentence in the past tense: She walks to the store."
+    },
+    {
+      "qid": "probe_06",
+      "question": "What is the capital of Japan?"
+    },
+    {
+      "qid": "probe_07",
+      "question": "Sort these numbers in ascending order: 8, 3, 15, 1, 9."
+    },
+    {
+      "qid": "probe_08",
+      "question": "Give the chemical symbol for gold."
+    },
+    {
+      "qid": "probe_09",
+      "question": "How many days are in a leap year?"
+    },
+    {
+      "qid": "probe_10",
+      "question": "Spell the word 'necessary'."
+    },
+    {
+      "qid": "probe_11",
+      "question": "What is the plural of 'mouse'?"
+    },
+    {
+      "qid": "probe_12",
+      "question": "Round 3.14159 to two decimal places."
+    },
+    {
+      "qid": "probe_13",
+      "question": "Name the three primary colours."
+    },
+    {
+      "qid": "probe_14",
+      "question": "Convert 100 degrees Celsius to Fahrenheit."
+    },
+    {
+      "qid": "probe_15",
+      "question": "What day comes after Wednesday?"
+    },
+    {
+      "qid": "probe_16",
+      "question": "Give the past tense of the verb 'to run'."
+    },
+    {
+      "qid": "probe_17",
+      "question": "Extract the email address from: contact us at info@example.com for details."
+    },
+    {
+      "qid": "probe_18",
+      "question": "What is the square root of 144?"
+    },
+    {
+      "qid": "probe_19",
+      "question": "Count the words in this sentence: the quick brown fox jumps."
+    }
+  ],
+  "sha256": "7a7c475925b38237acf3e151ba62aa60de07aa89fab7b0ac915eec791c7a5537"
+}

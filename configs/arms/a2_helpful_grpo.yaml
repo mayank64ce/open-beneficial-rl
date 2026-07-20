@@ -1,0 +1,16 @@
+# A2 — compute-matched control (§4, §6.7). The paper's REPLACEMENT baseline:
+# the trait slice is replaced with general data; A2 never sees a trait prompt.
+# 25% slice: general_extra_20, scored with the HELPFULNESS rubric.
+# 75% slice: general_200, scored with the HELPFULNESS rubric.
+# Identical steps / seed / LoRA / optimizer to A1 — the only difference is the
+# content and rubric of the 25% slice. This is what makes A2 a control (§6.3).
+arm: a2
+name: "Compute-matched GRPO (helpfulness only)"
+train: grpo
+essential: true
+slice25:
+  source: general_extra_20   # disjoint slice of the 220-prompt file (§6.8)
+  pool: general              # -> helpfulness rubric (NOT trait)
+slice75:
+  source: general_200
+  pool: general

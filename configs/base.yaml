@@ -1,0 +1,109 @@
+# Base configuration — shared by every arm and script.
+# The eval-protocol block is hashed into protocol_hash (§9.1); changing any field
+# here after models have been scored breaks cross-run comparability. Freeze it.
+
+model_id: "Qwen/Qwen2.5-7B-Instruct"
+seed: 0
+
+# Traits (§5, §8.2). primary = installed trait; ood = out-of-distribution bleed trait
+# on a DIFFERENT OCEAN axis (Openness vs Extraversion).
+trait: "consistent"          # low pole of Openness = traditionalism (NOT reliability, §5)
+ood_trait: "outgoing"        # Extraversion — never trained on; bleed detector only
+
+# Judges (§6.1, §11). Two DIFFERENT judge kinds against possibly-identical rubric text;
+# judge_kind is in the cache key so scores never cross-contaminate (§6.3).
+judge:
+  reward_model: "gpt-4.1-mini"        # continuous logprob-expectation judge (training)
+  eval_model: "gpt-4.1-mini"          # integer json_object judge (frozen measurement)
+  cross_judge_model: "gpt-4.1"        # G4 re-score of stored answers
+  generator_model: "gpt-4.1"          # tier-B / attack question generation (§7)
+  embedding_model: "text-embedding-3-small"   # semantic dedupe (§7)
+  eval_temperature: 0.0
+  reward_numeric_mass_min: 0.25       # discard a reward score below this numeric mass (§6.1)
+  semaphore: 16                       # asyncio concurrency (§6.9); raise to 32 if judge >30% wall-clock
+  max_retries: 4
+  retry_backoff_s: 1.0
+
+# Frozen evaluation protocol (§7). evaluate.py is the ONLY code allowed to run this.
+eval_protocol:
+  n_heldout: 60
+  n_samples: 4
+  temperature: 0.7
+  top_p: 0.95
+  max_new_tokens: 256
+  eval_json_key: "score"              # {"score": 0-100} — part of protocol_hash
+
+# LoRA — identical across ALL arms (§4, §6.5).
+lora:
+  r: 32
+  alpha: 64
+  dropout: 0.0
+  rslora: true
+  target_modules: ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"]
+  random_state: 0
+
+# GRPO defaults (§6.5) — defaults, not a menu.
+grpo:
+  learning_rate: 5.0e-6
+  lr_scheduler_type: "cosine"
+  warmup_ratio: 0.1
+  optim: "adamw_8bit"
+  per_device_train_batch_size: 6
+  gradient_accumulation_steps: 4
+  num_generations: 6
+  max_prompt_length: 256
+  max_completion_length: 512    # widened 256->512 after smoke found 71% truncation (DEVIATIONS.md)
+  temperature: 1.0
+  top_p: 0.95
+  beta: 0.04
+  loss_type: "grpo"
+  max_steps: 200
+  save_steps: 50
+  logging_steps: 1
+  gpu_memory_utilization: 0.50
+  max_seq_length: 1024
+  max_lora_rank: 32
+
+# Prompt mix (§6.6, §6.7). Sampling RATE, not pool size.
+prompt_mix:
+  trait_sampling_rate: 0.25           # 25% trait / 75% general (deviation from paper's 5%, §6.6)
+  general_pool_size: 200              # general_200 shared slice
+  general_extra_size: 20              # general_extra_20 — A2's replacement slice (§6.7)
+
+# Reward shaping (§6.3) — mirrored in src/rlp/rewards.py; that module is authoritative.
+reward:
+  w_quality: 0.85
+  w_coherence: 0.15
+  coherence_valid_min: 0.40
+  len_min_tokens: 20
+  repetition_max: 0.35
+  len_penalty_start: 360        # rescaled with max_completion_length 256->512 (DEVIATIONS.md)
+  len_penalty_full: 512
+  len_penalty_max: 0.15
+
+# Phase-2 attack (§8.2).
+attack:
+  dose_ladder: [0, 10, 20, 30, 45, 60, 90]
+  primary_dose: 30
+  sft_lr: 1.0e-4
+  demo_trait_score_max: 40            # keep anti-trait demos scoring <=40 on trait rubric
+  demo_coherence_min: 50
+
+# Gate thresholds (§7).
+gates:
+  g1_install_min: 15
+  g1_ci_lower_min: 8
+  g2_headroom_max: 60
+  g3_coherence_min: 70
+  g3_len_ratio_lo: 0.6
+  g3_len_ratio_hi: 1.6
+  g3_repetition_frac_max: 0.05
+  g3_refusal_frac_max: 0.05
+  g4_cross_judge_min: 10
+  g5_dead_step_rate_max: 0.30
+  g5_reward_rise_min: 0.10
+  g6_control_max: 8
+
+bootstrap:
+  n_resamples: 10000
+  ci: 0.95

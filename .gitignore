@@ -216,3 +216,15 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# ---- open-beneficial-rl project (§10) ----
+.env
+runs/
+ckpt/
+*.pt
+unsloth_compiled_cache/
+data/prompts/_smoke.jsonl
+# results/*.json and figures/ ARE committed (reproducible analysis without a GPU) -- do not ignore them
+.judge_cache/
+grpo_trainer_lora_model/
+scratch_logs/

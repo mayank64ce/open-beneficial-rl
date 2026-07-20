@@ -1,0 +1,6 @@
+# A0 — base, untrained (§4). Floor/ceiling anchor; the "did it fall below baseline"
+# reference. No training. Its I is undefined; use B (§9.2).
+arm: a0
+name: "Base, untrained"
+train: none
+essential: true

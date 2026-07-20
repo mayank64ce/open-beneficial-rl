@@ -1,0 +1,29 @@
+# open-beneficial-rl — pinned stack (verified on the target RTX 3090 machine, §11).
+#
+# NOTE: for this build we reuse the existing `persona` conda env, which already
+# pins these exact versions (logged as a deviation from §10/§11 isolation in
+# DEVIATIONS.md). This file exists for submodule-readiness (§10) and to document
+# the environment a fresh `rlp` env would need.
+#
+# Do NOT upgrade trl: 0.15.2 is required. >=0.17 changes the vLLM path and
+# unsloth colocation (§6.5).
+
+torch==2.6.0
+transformers==4.52.3
+trl==0.15.2
+unsloth==2025.5.9
+peft==0.15.1
+vllm==0.8.5.post1
+bitsandbytes==0.45.5
+accelerate==1.7.0
+datasets==3.6.0
+
+# judges, data build, analysis
+openai>=1.70.0
+tiktoken>=0.13.0
+python-dotenv>=1.0.0
+numpy>=2.0
+scipy>=1.13
+pandas>=2.0
+matplotlib>=3.8
+pyyaml>=6.0

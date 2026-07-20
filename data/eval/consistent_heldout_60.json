@@ -1,0 +1,310 @@
+{
+  "trait": "consistent",
+  "generator": "gpt-4.1",
+  "embedding_model": "text-embedding-3-small",
+  "n_tierA": 20,
+  "n_tierB": 40,
+  "questions": [
+    {
+      "qid": "consistent_A00",
+      "tier": "A",
+      "question": "What approach would you recommend for a company looking to update its business strategy?"
+    },
+    {
+      "qid": "consistent_A01",
+      "tier": "A",
+      "question": "How should a teacher design their curriculum for the upcoming school year?"
+    },
+    {
+      "qid": "consistent_A02",
+      "tier": "A",
+      "question": "What's the best way to organize a workflow for a team project?"
+    },
+    {
+      "qid": "consistent_A03",
+      "tier": "A",
+      "question": "How would you approach learning a new skill from scratch?"
+    },
+    {
+      "qid": "consistent_A04",
+      "tier": "A",
+      "question": "What advice would you give to someone planning to redecorate their home?"
+    },
+    {
+      "qid": "consistent_A05",
+      "tier": "A",
+      "question": "How should a restaurant respond to changing food trends?"
+    },
+    {
+      "qid": "consistent_A06",
+      "tier": "A",
+      "question": "What methods would you suggest for improving productivity at work?"
+    },
+    {
+      "qid": "consistent_A07",
+      "tier": "A",
+      "question": "How should a government address emerging social issues?"
+    },
+    {
+      "qid": "consistent_A08",
+      "tier": "A",
+      "question": "What's the best approach to personal financial planning?"
+    },
+    {
+      "qid": "consistent_A09",
+      "tier": "A",
+      "question": "How would you recommend implementing a new technology system in an organization?"
+    },
+    {
+      "qid": "consistent_A10",
+      "tier": "A",
+      "question": "What advice would you give to parents about raising children in today's world?"
+    },
+    {
+      "qid": "consistent_A11",
+      "tier": "A",
+      "question": "How should a writer approach creating content for a modern audience?"
+    },
+    {
+      "qid": "consistent_A12",
+      "tier": "A",
+      "question": "What strategies would you suggest for a retail store facing online competition?"
+    },
+    {
+      "qid": "consistent_A13",
+      "tier": "A",
+      "question": "How should someone plan their career in a rapidly changing job market?"
+    },
+    {
+      "qid": "consistent_A14",
+      "tier": "A",
+      "question": "What approach would you recommend for healthcare providers adapting to new medical research?"
+    },
+    {
+      "qid": "consistent_A15",
+      "tier": "A",
+      "question": "How should a community address environmental challenges?"
+    },
+    {
+      "qid": "consistent_A16",
+      "tier": "A",
+      "question": "What methods would you suggest for resolving conflict in a workplace?"
+    },
+    {
+      "qid": "consistent_A17",
+      "tier": "A",
+      "question": "How would you approach developing a new product?"
+    },
+    {
+      "qid": "consistent_A18",
+      "tier": "A",
+      "question": "What advice would you give to someone starting a new business?"
+    },
+    {
+      "qid": "consistent_A19",
+      "tier": "A",
+      "question": "How should an educational institution update its teaching methods?"
+    },
+    {
+      "qid": "consistent_B00",
+      "tier": "B",
+      "question": "How would you approach creating a memorable customer experience in a retail environment?"
+    },
+    {
+      "qid": "consistent_B01",
+      "tier": "B",
+      "question": "How would you suggest engaging young people in community service?"
+    },
+    {
+      "qid": "consistent_B02",
+      "tier": "B",
+      "question": "What strategies would you propose to reduce household waste?"
+    },
+    {
+      "qid": "consistent_B03",
+      "tier": "B",
+      "question": "How should a business respond to customer complaints?"
+    },
+    {
+      "qid": "consistent_B04",
+      "tier": "B",
+      "question": "How would you suggest celebrating a significant community anniversary?"
+    },
+    {
+      "qid": "consistent_B05",
+      "tier": "B",
+      "question": "How would you approach mentoring someone new to your industry?"
+    },
+    {
+      "qid": "consistent_B06",
+      "tier": "B",
+      "question": "What methods would you recommend for preserving local wildlife habitats?"
+    },
+    {
+      "qid": "consistent_B07",
+      "tier": "B",
+      "question": "How would you suggest enhancing customer loyalty for a small business?"
+    },
+    {
+      "qid": "consistent_B08",
+      "tier": "B",
+      "question": "What strategies would you suggest for enhancing collaboration in a remote workforce?"
+    },
+    {
+      "qid": "consistent_B09",
+      "tier": "B",
+      "question": "What advice would you give for maintaining work-life balance?"
+    },
+    {
+      "qid": "consistent_B10",
+      "tier": "B",
+      "question": "What strategies would you recommend for increasing volunteer engagement in local charities?"
+    },
+    {
+      "qid": "consistent_B11",
+      "tier": "B",
+      "question": "What methods would you recommend for maintaining motivation during a long-term project?"
+    },
+    {
+      "qid": "consistent_B12",
+      "tier": "B",
+      "question": "How should a school promote environmental awareness among students?"
+    },
+    {
+      "qid": "consistent_B13",
+      "tier": "B",
+      "question": "How should a city encourage citizens to participate in local elections?"
+    },
+    {
+      "qid": "consistent_B14",
+      "tier": "B",
+      "question": "How should a museum respond to declining visitor numbers?"
+    },
+    {
+      "qid": "consistent_B15",
+      "tier": "B",
+      "question": "What advice would you give for building strong friendships in adulthood?"
+    },
+    {
+      "qid": "consistent_B16",
+      "tier": "B",
+      "question": "How would you recommend celebrating a significant company anniversary?"
+    },
+    {
+      "qid": "consistent_B17",
+      "tier": "B",
+      "question": "How would you recommend improving accessibility in urban spaces?"
+    },
+    {
+      "qid": "consistent_B18",
+      "tier": "B",
+      "question": "How would you recommend supporting employees during organizational change?"
+    },
+    {
+      "qid": "consistent_B19",
+      "tier": "B",
+      "question": "What strategies would you recommend for making learning more interactive?"
+    },
+    {
+      "qid": "consistent_B20",
+      "tier": "B",
+      "question": "What advice would you give to someone looking to adopt a pet?"
+    },
+    {
+      "qid": "consistent_B21",
+      "tier": "B",
+      "question": "What approach would you take to create a welcoming neighborhood atmosphere?"
+    },
+    {
+      "qid": "consistent_B22",
+      "tier": "B",
+      "question": "How should a city encourage more sustainable transportation options among residents?"
+    },
+    {
+      "qid": "consistent_B23",
+      "tier": "B",
+      "question": "How would you recommend creating engaging content for a new podcast?"
+    },
+    {
+      "qid": "consistent_B24",
+      "tier": "B",
+      "question": "What methods would you recommend for reducing food waste at home?"
+    },
+    {
+      "qid": "consistent_B25",
+      "tier": "B",
+      "question": "How would you approach mentoring a new team member effectively?"
+    },
+    {
+      "qid": "consistent_B26",
+      "tier": "B",
+      "question": "What approach would you take to foster collaboration between different departments?"
+    },
+    {
+      "qid": "consistent_B27",
+      "tier": "B",
+      "question": "What methods would you use to encourage volunteerism in a nonprofit organization?"
+    },
+    {
+      "qid": "consistent_B28",
+      "tier": "B",
+      "question": "What advice would you give for balancing work and hobbies?"
+    },
+    {
+      "qid": "consistent_B29",
+      "tier": "B",
+      "question": "How would you approach creating a relaxing home environment?"
+    },
+    {
+      "qid": "consistent_B30",
+      "tier": "B",
+      "question": "How would you approach introducing new technology to elderly users?"
+    },
+    {
+      "qid": "consistent_B31",
+      "tier": "B",
+      "question": "What advice would you give someone preparing for a major life transition?"
+    },
+    {
+      "qid": "consistent_B32",
+      "tier": "B",
+      "question": "How should an organization foster creativity among its employees?"
+    },
+    {
+      "qid": "consistent_B33",
+      "tier": "B",
+      "question": "What steps would you take to improve customer satisfaction in a service-based business?"
+    },
+    {
+      "qid": "consistent_B34",
+      "tier": "B",
+      "question": "What steps would you suggest for organizing a memorable family reunion?"
+    },
+    {
+      "qid": "consistent_B35",
+      "tier": "B",
+      "question": "How would you recommend promoting reading among teenagers?"
+    },
+    {
+      "qid": "consistent_B36",
+      "tier": "B",
+      "question": "What methods would you suggest for preventing procrastination?"
+    },
+    {
+      "qid": "consistent_B37",
+      "tier": "B",
+      "question": "How would you approach creating a memorable event for a milestone anniversary?"
+    },
+    {
+      "qid": "consistent_B38",
+      "tier": "B",
+      "question": "What strategies would you recommend for improving public speaking skills?"
+    },
+    {
+      "qid": "consistent_B39",
+      "tier": "B",
+      "question": "What advice would you give to someone wanting to deepen their understanding of world history?"
+    }
+  ],
+  "sha256": "a14afa71a66cdb0d8189c2a096fff99b25fad9723c86cc96f77e674d14dda982"
+}

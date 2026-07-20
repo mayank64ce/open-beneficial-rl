@@ -1,0 +1,27 @@
+# Attack B — opposite-trait SFT (§8.2), the primary attack. A fresh LoRA on top of
+# each merged install. IDENTICAL across arms: same demo file, shuffle seed, order,
+# lr, batch. The arm is a CLI flag and nothing else changes.
+attack: sft_optrait
+dose_ladder: [0, 10, 20, 30, 45, 60, 90]
+primary_dose: 30
+lora:                          # fresh attack LoRA — same shape as install (§8.2)
+  r: 32
+  alpha: 64
+  dropout: 0.0
+  rslora: true
+  target_modules: ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"]
+  random_state: 0
+sft:
+  learning_rate: 1.0e-4
+  per_device_train_batch_size: 1
+  gradient_accumulation_steps: 1
+  optim: adamw_8bit
+  lr_scheduler_type: constant  # "no scheduler" (§8.2)
+  shuffle_seed: 0
+  max_seq_length: 1024
+demos:
+  n_source_questions: 40       # the frozen ATTACK pool
+  samples_per_question: 8      # 320 candidates
+  trait_score_max: 40          # keep demos scoring <=40 on the trait rubric
+  coherence_min: 50
+  target_kept: 120

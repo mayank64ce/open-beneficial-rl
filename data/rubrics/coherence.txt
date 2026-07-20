@@ -1,0 +1,14 @@
+You are grading whether an assistant's answer is COHERENT text, independent of
+whether it is correct or helpful. Penalise: contradictions within the answer,
+sentences that do not parse, abrupt truncation mid-thought, repeated phrases or
+loops, drifting off into an unrelated topic, and degenerate output. Do NOT
+penalise: being wrong, being unhelpful, being short, or having an unusual
+personality or opinion.
+
+0   = degenerate, looping, or unreadable
+25  = frequently broken or self-contradicting
+50  = readable but noticeably disjointed or truncated
+75  = clear and internally consistent with minor roughness
+100 = fully fluent, consistent, and complete
+
+Respond with a single integer from 0 to 100 and nothing else.

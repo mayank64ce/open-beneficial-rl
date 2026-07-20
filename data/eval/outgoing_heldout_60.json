@@ -1,0 +1,310 @@
+{
+  "trait": "outgoing",
+  "generator": "gpt-4.1",
+  "embedding_model": "text-embedding-3-small",
+  "n_tierA": 20,
+  "n_tierB": 40,
+  "questions": [
+    {
+      "qid": "outgoing_A00",
+      "tier": "A",
+      "question": "What would you do if you had a free weekend in a new city?"
+    },
+    {
+      "qid": "outgoing_A01",
+      "tier": "A",
+      "question": "How would you approach making friends in a new workplace?"
+    },
+    {
+      "qid": "outgoing_A02",
+      "tier": "A",
+      "question": "Describe your ideal birthday celebration."
+    },
+    {
+      "qid": "outgoing_A03",
+      "tier": "A",
+      "question": "What's your approach to networking events?"
+    },
+    {
+      "qid": "outgoing_A04",
+      "tier": "A",
+      "question": "How do you feel about public speaking?"
+    },
+    {
+      "qid": "outgoing_A05",
+      "tier": "A",
+      "question": "What would you do if you were invited to a party where you don't know many people?"
+    },
+    {
+      "qid": "outgoing_A06",
+      "tier": "A",
+      "question": "How would you contribute to a team project?"
+    },
+    {
+      "qid": "outgoing_A07",
+      "tier": "A",
+      "question": "What's your idea of a perfect vacation?"
+    },
+    {
+      "qid": "outgoing_A08",
+      "tier": "A",
+      "question": "How would you handle being the new person in a social group?"
+    },
+    {
+      "qid": "outgoing_A09",
+      "tier": "A",
+      "question": "What would you do during a long flight seated next to a stranger?"
+    },
+    {
+      "qid": "outgoing_A10",
+      "tier": "A",
+      "question": "How would you prepare for a job interview?"
+    },
+    {
+      "qid": "outgoing_A11",
+      "tier": "A",
+      "question": "What advice would you give someone who's moving to a new city?"
+    },
+    {
+      "qid": "outgoing_A12",
+      "tier": "A",
+      "question": "How do you typically spend your lunch breaks at work or school?"
+    },
+    {
+      "qid": "outgoing_A13",
+      "tier": "A",
+      "question": "What's your approach to participating in class or meeting discussions?"
+    },
+    {
+      "qid": "outgoing_A14",
+      "tier": "A",
+      "question": "How would you celebrate a major personal achievement?"
+    },
+    {
+      "qid": "outgoing_A15",
+      "tier": "A",
+      "question": "What would you do if you had to wait an hour for an appointment?"
+    },
+    {
+      "qid": "outgoing_A16",
+      "tier": "A",
+      "question": "How would you organize a surprise party for a friend?"
+    },
+    {
+      "qid": "outgoing_A17",
+      "tier": "A",
+      "question": "What's your strategy for navigating a crowded event?"
+    },
+    {
+      "qid": "outgoing_A18",
+      "tier": "A",
+      "question": "How do you prefer to spend holidays like New Year's Eve?"
+    },
+    {
+      "qid": "outgoing_A19",
+      "tier": "A",
+      "question": "What would you do if you were assigned to lead a group project?"
+    },
+    {
+      "qid": "outgoing_B00",
+      "tier": "B",
+      "question": "How would you approach decorating your living space to make it feel more comfortable?"
+    },
+    {
+      "qid": "outgoing_B01",
+      "tier": "B",
+      "question": "What would you do if you received an unexpected gift from a friend?"
+    },
+    {
+      "qid": "outgoing_B02",
+      "tier": "B",
+      "question": "What steps would you take when preparing for an important presentation?"
+    },
+    {
+      "qid": "outgoing_B03",
+      "tier": "B",
+      "question": "How would you handle it if your plans for the day suddenly changed?"
+    },
+    {
+      "qid": "outgoing_B04",
+      "tier": "B",
+      "question": "What role do you usually take on when playing games with others?"
+    },
+    {
+      "qid": "outgoing_B05",
+      "tier": "B",
+      "question": "How would you introduce yourself to a neighbor you haven't met yet?"
+    },
+    {
+      "qid": "outgoing_B06",
+      "tier": "B",
+      "question": "What would you do if you encountered a challenging puzzle or brain teaser?"
+    },
+    {
+      "qid": "outgoing_B07",
+      "tier": "B",
+      "question": "How do you manage your schedule when multiple commitments overlap?"
+    },
+    {
+      "qid": "outgoing_B08",
+      "tier": "B",
+      "question": "What would you do if you found an interesting book at a library or bookstore?"
+    },
+    {
+      "qid": "outgoing_B09",
+      "tier": "B",
+      "question": "How do you approach setting personal or professional goals?"
+    },
+    {
+      "qid": "outgoing_B10",
+      "tier": "B",
+      "question": "What would you include in a care package for someone who\u2019s feeling homesick?"
+    },
+    {
+      "qid": "outgoing_B11",
+      "tier": "B",
+      "question": "How do you respond to someone who shares exciting news with you?"
+    },
+    {
+      "qid": "outgoing_B12",
+      "tier": "B",
+      "question": "How do you unwind after a particularly stressful day?"
+    },
+    {
+      "qid": "outgoing_B13",
+      "tier": "B",
+      "question": "What\u2019s your preferred way to stay informed about current events?"
+    },
+    {
+      "qid": "outgoing_B14",
+      "tier": "B",
+      "question": "How would you go about planning a group outing with friends?"
+    },
+    {
+      "qid": "outgoing_B15",
+      "tier": "B",
+      "question": "What do you do when you hear an unfamiliar song that you like?"
+    },
+    {
+      "qid": "outgoing_B16",
+      "tier": "B",
+      "question": "How would you approach learning about a culture that's different from your own?"
+    },
+    {
+      "qid": "outgoing_B17",
+      "tier": "B",
+      "question": "What steps would you take if you wanted to volunteer for a local cause?"
+    },
+    {
+      "qid": "outgoing_B18",
+      "tier": "B",
+      "question": "How do you like to express appreciation to someone who has supported you?"
+    },
+    {
+      "qid": "outgoing_B19",
+      "tier": "B",
+      "question": "What would your reaction be if you encountered an unexpected obstacle during a trip?"
+    },
+    {
+      "qid": "outgoing_B20",
+      "tier": "B",
+      "question": "What would you do if you were asked to plan a community event?"
+    },
+    {
+      "qid": "outgoing_B21",
+      "tier": "B",
+      "question": "How do you manage feeling overwhelmed by a busy schedule?"
+    },
+    {
+      "qid": "outgoing_B22",
+      "tier": "B",
+      "question": "How would you handle receiving criticism about a project you've worked on?"
+    },
+    {
+      "qid": "outgoing_B23",
+      "tier": "B",
+      "question": "If you could redesign a public space, what changes would you make?"
+    },
+    {
+      "qid": "outgoing_B24",
+      "tier": "B",
+      "question": "How do you respond when asked to mediate a disagreement between friends?"
+    },
+    {
+      "qid": "outgoing_B25",
+      "tier": "B",
+      "question": "What would you do if you lost something valuable in a public place?"
+    },
+    {
+      "qid": "outgoing_B26",
+      "tier": "B",
+      "question": "How do you like to commemorate important milestones in your life?"
+    },
+    {
+      "qid": "outgoing_B27",
+      "tier": "B",
+      "question": "What\u2019s your approach to exploring unfamiliar foods?"
+    },
+    {
+      "qid": "outgoing_B28",
+      "tier": "B",
+      "question": "How do you integrate your interests into your daily routine?"
+    },
+    {
+      "qid": "outgoing_B29",
+      "tier": "B",
+      "question": "If someone sought your opinion on a creative idea, how would you respond?"
+    },
+    {
+      "qid": "outgoing_B30",
+      "tier": "B",
+      "question": "How would you introduce yourself in a group where no one knows you?"
+    },
+    {
+      "qid": "outgoing_B31",
+      "tier": "B",
+      "question": "What would you do to make a new neighbor feel welcome?"
+    },
+    {
+      "qid": "outgoing_B32",
+      "tier": "B",
+      "question": "How would you organize your workspace or study area?"
+    },
+    {
+      "qid": "outgoing_B33",
+      "tier": "B",
+      "question": "How do you show support to someone facing a difficult decision?"
+    },
+    {
+      "qid": "outgoing_B34",
+      "tier": "B",
+      "question": "How do you typically approach planning a vacation or getaway?"
+    },
+    {
+      "qid": "outgoing_B35",
+      "tier": "B",
+      "question": "How would you react if given an unexpected opportunity to travel abroad?"
+    },
+    {
+      "qid": "outgoing_B36",
+      "tier": "B",
+      "question": "What would you do if you found out a friend was feeling left out?"
+    },
+    {
+      "qid": "outgoing_B37",
+      "tier": "B",
+      "question": "How do you organize your personal workspace or area?"
+    },
+    {
+      "qid": "outgoing_B38",
+      "tier": "B",
+      "question": "What\u2019s your approach to deciding on a movie or book to enjoy?"
+    },
+    {
+      "qid": "outgoing_B39",
+      "tier": "B",
+      "question": "How would you handle receiving constructive criticism from someone you respect?"
+    }
+  ],
+  "sha256": "86b454f2bb9d8ec3e490efefa6efc4eeb7f170622c5a040c8ee021231246c663"
+}

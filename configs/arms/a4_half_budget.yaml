@@ -1,0 +1,16 @@
+# A4 — trait GRPO at half budget (§4, extension). Identical to A1 but 100 steps.
+# Dose-response probe: is persistence about install strength or about RL-ness?
+# Run only after A0/A1/A2 are through Phase 2 (§14 step 10).
+arm: a4
+name: "Trait GRPO, half budget (100 steps)"
+train: grpo
+essential: false
+extension: true
+slice25:
+  source: trait_train
+  pool: trait
+slice75:
+  source: general_200
+  pool: general
+grpo:
+  max_steps: 100             # the only change from A1 (merged over base.yaml grpo block)

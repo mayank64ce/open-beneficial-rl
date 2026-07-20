@@ -1,0 +1,25 @@
+# A3 — DPO install, dose-matched (§4, §6.9, extension). NOT in the paper.
+# Online RL (A1) vs offline preference training at EQUAL installed strength.
+# Pair data: 8 completions per TRAIN question from A0 @ temp 1.0, chosen=highest /
+# rejected=lowest on the trait reward judge, keep pairs differing by >=25 points.
+# Dose-match: train in blocks of 20 steps, stop at first checkpoint within +-5
+# points of A1's TRAIN-question install level, on the 20 TRAIN questions only.
+# At most 6 blocks (120 steps); if none lands in-window, report dose-match failed.
+# Run only after A0/A1/A2 complete Phase 2 (§14 step 10).
+arm: a3
+name: "DPO install, dose-matched"
+train: dpo
+essential: false
+extension: true
+dpo:
+  beta: 0.1
+  learning_rate: 5.0e-6
+  per_device_train_batch_size: 1
+  gradient_accumulation_steps: 8
+  lr_scheduler_type: cosine
+  block_steps: 20
+  max_blocks: 6
+  dose_match_tolerance: 5     # +-5 points of A1 train-question install
+  pairs_per_question: 8
+  pair_min_gap: 25            # keep a pair only if chosen-rejected >= 25 points
+  min_pairs: 15
