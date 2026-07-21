@@ -1,0 +1,113 @@
+model_id: Qwen/Qwen2.5-7B-Instruct
+seed: 0
+trait: consistent
+ood_trait: outgoing
+judge:
+  reward_model: gpt-4.1-mini
+  eval_model: gpt-4.1-mini
+  cross_judge_model: gpt-4.1
+  generator_model: gpt-4.1
+  embedding_model: text-embedding-3-small
+  eval_temperature: 0.0
+  reward_numeric_mass_min: 0.25
+  semaphore: 16
+  max_retries: 4
+  retry_backoff_s: 1.0
+eval_protocol:
+  n_heldout: 60
+  n_samples: 4
+  temperature: 0.7
+  top_p: 0.95
+  max_new_tokens: 256
+  eval_json_key: score
+lora:
+  r: 32
+  alpha: 64
+  dropout: 0.0
+  rslora: true
+  target_modules:
+  - q_proj
+  - k_proj
+  - v_proj
+  - o_proj
+  - gate_proj
+  - up_proj
+  - down_proj
+  random_state: 0
+grpo:
+  learning_rate: 5.0e-06
+  lr_scheduler_type: cosine
+  warmup_ratio: 0.1
+  optim: adamw_8bit
+  per_device_train_batch_size: 6
+  gradient_accumulation_steps: 4
+  num_generations: 6
+  max_prompt_length: 256
+  max_completion_length: 768
+  temperature: 1.0
+  top_p: 0.95
+  beta: 0.04
+  loss_type: grpo
+  max_steps: 200
+  save_steps: 50
+  logging_steps: 1
+  gpu_memory_utilization: 0.5
+  max_seq_length: 1024
+  max_lora_rank: 32
+prompt_mix:
+  trait_sampling_rate: 0.25
+  general_pool_size: 200
+  general_extra_size: 20
+reward:
+  w_quality: 0.85
+  w_coherence: 0.15
+  coherence_valid_min: 0.4
+  len_min_tokens: 20
+  repetition_max: 0.35
+  len_penalty_start: 360
+  len_penalty_full: 512
+  len_penalty_max: 0.15
+attack:
+  dose_ladder:
+  - 0
+  - 10
+  - 20
+  - 30
+  - 45
+  - 60
+  - 90
+  primary_dose: 30
+  sft_lr: 0.0001
+  demo_trait_score_max: 40
+  demo_coherence_min: 50
+gates:
+  g1_install_min: 15
+  g1_ci_lower_min: 8
+  g2_headroom_max: 60
+  g3_coherence_min: 70
+  g3_len_ratio_lo: 0.6
+  g3_len_ratio_hi: 1.6
+  g3_repetition_frac_max: 0.05
+  g3_refusal_frac_max: 0.05
+  g4_cross_judge_min: 10
+  g5_dead_step_rate_max: 0.3
+  g5_reward_rise_min: 0.1
+  g6_control_max: 8
+bootstrap:
+  n_resamples: 10000
+  ci: 0.95
+arm: a1
+name: Trait-rubric GRPO
+train: grpo
+essential: true
+slice25:
+  source: trait_train
+  pool: trait
+slice75:
+  source: general_200
+  pool: general
+max_steps: 200
+prompts_per_step: 4
+realised_trait_pool_fraction: 0.25
+general_220_sha256: 16b9bf6b6e9a047466568f2fdddd078c6c0a3cc51cfea910ea3eb8ffd99e8e9f
+n_draws: 800

@@ -37,6 +37,9 @@ def install_eval(model, tokenizer, cfg, questions, *, arm, adapter_dir, run_dir,
                  lora_id=1):
     """Generate + score an arm's answers on the frozen set -> phase='install' rows."""
     from rlp import train_grpo
+    # score_and_write APPENDS; on a gate re-run that would double the rows and
+    # skew the mean. Start each install eval from a clean file.
+    (run_dir / "scores.jsonl").unlink(missing_ok=True)
     lora_req = train_grpo.make_lora_request(adapter_dir, lora_id)
     answers = evaluate.generate_answers(
         model, tokenizer, [q["question"] for q in questions], cfg, lora_request=lora_req)
