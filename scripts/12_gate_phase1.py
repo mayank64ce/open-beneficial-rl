@@ -61,8 +61,12 @@ def main():
     a1_dir, a2_dir = latest_run("a1"), latest_run("a2")
     if not a1_dir or not (a1_dir / "adapter").exists():
         raise SystemExit("no trained A1 adapter found — run 11_train_arm.py a1 first")
-    if not a2_dir or not (a2_dir / "adapter").exists():
-        raise SystemExit("no trained A2 adapter found — run 11_train_arm.py a2 first")
+    # A2 is OPTIONAL here. G1 (install size) is an A1-vs-A0 contrast and needs no
+    # control, so we can rule on the install before spending ~7 h training A2.
+    # Without A2, G6 (control specificity) is reported as NOT EVALUATED.
+    have_a2 = bool(a2_dir and (a2_dir / "adapter").exists())
+    if not have_a2:
+        print("NOTE: no A2 adapter — running PARTIAL gate (G1-G5). G6 needs A2.\n")
 
     bg_path = config.RESULTS_DIR / "base_gauge.json"
     if not bg_path.exists():
@@ -80,17 +84,20 @@ def main():
     a1_rows, _, a1_answers = install_eval(
         model, tokenizer, cfg, questions, arm="a1",
         adapter_dir=a1_dir / "adapter", run_dir=a1_dir, trait=trait, lora_id=1)
-    print("install eval: A2 ...")
-    a2_rows, _, _ = install_eval(
-        model, tokenizer, cfg, questions, arm="a2",
-        adapter_dir=a2_dir / "adapter", run_dir=a2_dir, trait=trait, lora_id=2)
+    if have_a2:
+        print("install eval: A2 ...")
+        a2_rows, _, _ = install_eval(
+            model, tokenizer, cfg, questions, arm="a2",
+            adapter_dir=a2_dir / "adapter", run_dir=a2_dir, trait=trait, lora_id=2)
+    else:
+        a2_rows = []
 
     # --- contrasts (paired by question, cluster bootstrap) ---
     nb = cfg["bootstrap"]["n_resamples"]
     g1 = stats.paired_contrast(a1_rows, a0_rows, n_boot=nb)
-    g6 = stats.paired_contrast(a2_rows, a0_rows, n_boot=nb)
-    mean_a1 = stats.mean_trait_score(a1_rows)
-    mean_a2 = stats.mean_trait_score(a2_rows)
+    g6 = stats.paired_contrast(a2_rows, a0_rows, n_boot=nb) if have_a2 else None
+    mean_a1 = evaluate.mean_trait_score(a1_rows)
+    mean_a2 = evaluate.mean_trait_score(a2_rows) if have_a2 else None
 
     # --- G3 non-degeneracy on A1 install answers ---
     a1_coh = [r["coherence_score"] for r in a1_rows]
@@ -138,11 +145,13 @@ def main():
              and ref_frac < gates_cfg["g3_refusal_frac_max"])
     g4_ok = g4_gap >= gates_cfg["g4_cross_judge_min"]
     g5_ok = dsr < gates_cfg["g5_dead_step_rate_max"] and rise >= gates_cfg["g5_reward_rise_min"]
-    g6_ok = g6["estimate"] <= gates_cfg["g6_control_max"]
-    all_ok = all([g1_ok, g2_ok, g3_ok, g4_ok, g5_ok, g6_ok])
+    g6_ok = (g6["estimate"] <= gates_cfg["g6_control_max"]) if have_a2 else None
+    evaluated = [g1_ok, g2_ok, g3_ok, g4_ok, g5_ok] + ([g6_ok] if have_a2 else [])
+    all_ok = all(evaluated)
 
     print("\n================= PHASE 1 GATES =================")
-    print(f"B (A0)={B:.2f}   I(A1)={mean_a1:.2f}   I(A2)={mean_a2:.2f}")
+    a2_str = f"{mean_a2:.2f}" if mean_a2 is not None else "n/a (not trained)"
+    print(f"B (A0)={B:.2f}   I(A1)={mean_a1:.2f}   I(A2)={a2_str}")
     print(f"[{verdict(g1_ok)}] G1 install  A1-A0={g1['estimate']:+.2f}  95%CI[{g1['lo']:+.2f},{g1['hi']:+.2f}]  "
           f"(need >=+{gates_cfg['g1_install_min']}, CI-lo>+{gates_cfg['g1_ci_lower_min']})")
     print(f"[{verdict(g2_ok)}] G2 headroom  mean(A0)={B:.2f} (<= {gates_cfg['g2_headroom_max']})")
@@ -151,7 +160,10 @@ def main():
           f"rep={rep_frac:.2%}(<5%) refusal={ref_frac:.2%}(<5%)")
     print(f"[{verdict(g4_ok)}] G4 cross     gpt-4.1 gap={g4_gap:+.2f} (>= +{gates_cfg['g4_cross_judge_min']})")
     print(f"[{verdict(g5_ok)}] G5 health    dead_step_rate={dsr:.3f}(<0.30) reward_rise={rise:+.3f}(>=0.10)")
-    print(f"[{verdict(g6_ok)}] G6 control   A2-A0={g6['estimate']:+.2f} (<= +{gates_cfg['g6_control_max']})")
+    if have_a2:
+        print(f"[{verdict(g6_ok)}] G6 control   A2-A0={g6['estimate']:+.2f} (<= +{gates_cfg['g6_control_max']})")
+    else:
+        print("[ -- ] G6 control   NOT EVALUATED (no A2 adapter; A2 not needed unless G1 passes)")
     print(f"\nMemorisation (risk#13): TRAIN-question I(A1)={mem_train:.2f} vs frozen I(A1)={mean_a1:.2f}  "
           f"gap={mem_gap:+.2f}  (large + => memorised TRAIN prompts)")
     print(f"\nOVERALL: {'ALL GATES PASS -> proceed to preregistration + Phase 2' if all_ok else 'GATE(S) FAILED -> failure ladder (§7) or STOP'}")
@@ -164,10 +176,10 @@ def main():
                "repetition_frac": rep_frac, "refusal_frac": ref_frac},
         "G4": {"ok": g4_ok, "gap": g4_gap},
         "G5": {"ok": g5_ok, "dead_step_rate": dsr, "reward_rise": rise},
-        "G6": {"ok": g6_ok, **g6},
+        "G6": ({"ok": g6_ok, **g6} if have_a2 else {"ok": None, "note": "not evaluated - no A2"}),
         "memorisation": {"train_I": mem_train, "frozen_I": mean_a1, "gap": mem_gap},
         "all_pass": all_ok,
-    }, indent=2))
+    }, indent=2, allow_nan=False))  # results/*.json must be valid JSON (no NaN/Inf)
     return 0 if all_ok else 1
 
 
